@@ -6,5 +6,7 @@ public interface Almacen {
 	public int extraer();
 	
 	public boolean hayProducto();
+
+	public int getTam();
 	
 }
