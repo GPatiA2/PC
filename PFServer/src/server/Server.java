@@ -22,6 +22,7 @@ public class Server {
 		Server S;
 		try {
 			S = new Server(puerto);
+			System.out.println(S.ip);
 			S.run();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
