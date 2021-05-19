@@ -1,63 +1,139 @@
 package cliente;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
+import javax.swing.SwingUtilities;
+
+import cliente.gui.MainWindow;
+import cliente.gui.ObserverCliente;
+import coms.FileInfo;
 import coms.UserInfo;
+import coms.mensajes.MensajeCerrarConexion;
+import coms.mensajes.MensajeConexion;
+import coms.mensajes.MensajeListaUsuarios;
+import coms.mensajes.MensajePedirFichero;
 import coms.oyentes.OyenteServidor;
 
-public class Cliente {
+public class Cliente implements Observable<ObserverCliente>{
 	
 	InetAddress serverip;
 	int serverPort;
 
 	InetAddress myIP;
 	String id;
+	OyenteServidor os;
+	Socket s;
+	
+	boolean conectado;
+	
+	List<String> fileIds;
 	
 	ObjectOutputStream toServer;
+	ObjectInputStream fromServer;
 	
-	public static void main(String args[]) throws IOException {
+	List<FileInfo> usuarioFichero;
+	List<ObserverCliente> observers;
+	
+	
+	public static void main(String args[]) {
 		
-		InetAddress ipserver = InetAddress.getByName(args[1]);
-		InetAddress ipthis = InetAddress.getLocalHost();
+		InetAddress ipserver = null;
+		InetAddress ipthis = null;
+		try {
+			ipserver = InetAddress.getByName(args[1]);
+			ipthis = InetAddress.getLocalHost();
+		} catch (UnknownHostException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 		int ps = Integer.parseInt(args[2]);
 		String id = args[0];
 		
-		Socket s = new Socket(ipserver, ps);
-		
-		ObjectInputStream fromServer = new ObjectInputStream(s.getInputStream());
-		ObjectOutputStream toServer = new ObjectOutputStream(s.getOutputStream());
-		
 		Cliente c = new Cliente(ipserver, ps, id, ipthis);
 		
-		OyenteServidor os = new OyenteServidor(c, fromServer, toServer);
-		Thread t = new Thread() {
-			public void run(OyenteServidor o) {
-				o.run();
+		System.out.println("Cliente creado");
+		
+		
+		
+		Controller ctrl = new Controller(c);
+		
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				// TODO Auto-generated method stub
+				new MainWindow(ctrl);
 			}
-		};
+		});
 		
-		MainWindow mw = new MainWindow(c);
-		
-		t.start();
+		c.init();
+		System.out.println("Oyente Creado");
 	}
 	
-	
+
 	public Cliente(InetAddress sip, int sport, String id, InetAddress myIp) {
 		serverip = sip;
 		serverPort = sport;
 		this.id = id;
 		this.myIP = myIp;
+		observers = new ArrayList<ObserverCliente>();
+		fileIds = cargarNombresFicheros();
+		conectado = false;
+		usuarioFichero = new ArrayList<FileInfo>();
+		
+		try {
+			s = new Socket(sip, sport);
+			fromServer = new ObjectInputStream(s.getInputStream());
+			toServer = new ObjectOutputStream(s.getOutputStream());
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		this.enviarMensajeConexion(sip);
 	}
 	
-	// Mostrar confirmación de conexion
-	public void confirmarConexion(UserInfo origen) {
-		// TODO Auto-generated method stub
+	private void init() {
+		OyenteServidor os = new OyenteServidor(this, fromServer, toServer);
+		Thread t = new Thread() {
+			public void run() {
+				os.run();
+			}
+		};
+		t.start();
+	}
+	
+	private ArrayList<String> cargarNombresFicheros(){
+		File dir = new File(id);
+		ArrayList<String> nombresFicheros = new ArrayList<String>();
+		if(!dir.mkdir()) {
+			for(File fichero : dir.listFiles()) {
+				nombresFicheros.add(fichero.getName());
+			}
+		}
 		
+		return nombresFicheros; 
+	}
+	
+	
+	
+	// Mostrar confirmación de conexion
+	public void confirmarConexion() {
+		// TODO Auto-generated method stub
+		this.conectado = true;
+		for(ObserverCliente ob : observers) {
+			ob.alRecibirConfirmacionConectar();
+		}
 	}
 	
 	// Crear un proceso para empezar a emitir el fichero de nombrefichero 
@@ -75,7 +151,77 @@ public class Cliente {
 	// Imprimir adios y salir
 	public void cerrarConexion() {
 		// TODO Auto-generated method stub
-		
+		this.conectado = false;
+		MensajeCerrarConexion msjcc = new MensajeCerrarConexion(id, myIP, "server", serverip);
+		try {
+			this.toServer.writeObject(msjcc);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			System.out.println("Error al mandar mensaje cerrar conexion");
+			e.printStackTrace();
+		}
+	}
+
+
+	@Override
+	public void addObserver(ObserverCliente o) {
+		// TODO Auto-generated method stub
+		observers.add(o);
+		o.alRegistrarse(conectado, usuarioFichero, new UserInfo(id, myIP));
+	}
+
+
+	@Override
+	public void removeObserver(ObserverCliente o) {
+		// TODO Auto-generated method stub
+		observers.remove(o);
+	}
+
+
+	public void enviarMensajeConexion(InetAddress ip) {
+		// TODO Auto-generated method stub
+		MensajeConexion msgc = new MensajeConexion(this.id, this.myIP, "server", ip, this.fileIds);
+		try {
+			this.toServer.writeObject(msgc);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			System.out.println("Error al enviar msg de conexion");
+		}
+	}
+
+
+	public void pedirTabla() {
+		// TODO Auto-generated method stub
+		MensajeListaUsuarios msglu = new MensajeListaUsuarios(this.id, myIP, "server", this.serverip);
+		try {
+			this.toServer.writeObject(msglu);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			System.out.println("Error al enviar mensaje de pedirTabla");
+			e.printStackTrace();
+		}
+	}
+
+
+	public void pedirFichero(String s) {
+		// TODO Auto-generated method stub
+		MensajePedirFichero msgpf = new MensajePedirFichero(this.id, myIP, "server", this.serverip, s);
+		try {
+			this.toServer.writeObject(msgpf);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			System.out.println("Error al enviar mensaje pedirFichero");
+			e.printStackTrace();
+		}
+	}
+
+
+	public void muestraUserList(List<FileInfo> l) {
+		// TODO Auto-generated method stub
+		usuarioFichero = l;
+		for(ObserverCliente ob : observers) {
+			ob.alRecibirTabla(l);
+		}
 	}
 
 }

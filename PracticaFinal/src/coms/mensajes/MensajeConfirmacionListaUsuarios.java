@@ -1,14 +1,16 @@
 package coms.mensajes;
 
 import java.net.InetAddress;
+import java.util.List;
 
 import cliente.Cliente;
+import coms.FileInfo;
 
 public class MensajeConfirmacionListaUsuarios extends MensajeCliente {
 
-	UserList l;
+	List<FileInfo> l;
 	
-	public MensajeConfirmacionListaUsuarios(String idfrom, InetAddress ipfrom, String idto, InetAddress ipto, Userlist l) {
+	public MensajeConfirmacionListaUsuarios(String idfrom, InetAddress ipfrom, String idto, InetAddress ipto, List<FileInfo> l) {
 		super(idfrom, ipfrom, idto, ipto);
 		// TODO Auto-generated constructor stub
 		this.l = l;

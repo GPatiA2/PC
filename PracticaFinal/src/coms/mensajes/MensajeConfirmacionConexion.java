@@ -14,7 +14,7 @@ public class MensajeConfirmacionConexion extends MensajeCliente {
 	@Override
 	public void accion(Cliente c) {
 		// TODO Auto-generated method stub
-		c.confirmarConexion(this.origen);
+		c.confirmarConexion();
 	}
 
 }
