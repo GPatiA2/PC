@@ -48,9 +48,9 @@ public class StatusBar extends JPanel implements ObserverCliente {
 	}
 
 	@Override
-	public void alRecibirPeticionDeEmision(UserInfo inf, String fichero) {
+	public void alRecibirPeticionDeEmision( String fichero) {
 		// TODO Auto-generated method stub
-		ultimaAccion.setText("El cliente con id = " + inf.getId() + " ha pedido el fichero " + fichero);
+		ultimaAccion.setText("Me han pedido el fichero " + fichero);
 	}
 
 	@Override

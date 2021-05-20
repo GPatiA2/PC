@@ -17,7 +17,7 @@ public class MensajePedirFichero extends MensajeServer {
 	@Override
 	public void accion(Servidor s, int puerto) {
 		// TODO Auto-generated method stub
-		s.pedirFichero(ficheroPedido, this.origen);
+		s.pedirFichero(ficheroPedido, this.origen, puerto);
 	}
 
 }

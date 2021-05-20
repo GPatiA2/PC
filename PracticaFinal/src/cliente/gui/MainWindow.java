@@ -137,7 +137,7 @@ public class MainWindow extends JFrame implements ObserverCliente {
 	}
 
 	@Override
-	public void alRecibirPeticionDeEmision(UserInfo inf, String fichero) {
+	public void alRecibirPeticionDeEmision( String fichero) {
 		// TODO Auto-generated method stub
 		
 	}

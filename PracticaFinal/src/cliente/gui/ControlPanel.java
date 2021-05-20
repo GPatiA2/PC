@@ -92,7 +92,7 @@ public class ControlPanel extends JPanel implements ObserverCliente {
 	}
 
 	@Override
-	public void alRecibirPeticionDeEmision(UserInfo inf, String fichero) {
+	public void alRecibirPeticionDeEmision(String fichero) {
 		// TODO Auto-generated method stub
 	}
 

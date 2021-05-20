@@ -58,14 +58,14 @@ public class Mensajero {
 		}
 	}
 
-	public void pideFichero(InetAddress prop, String ficheroPedido, UserInfo origen) {
+	public void pideFichero(int prop, String ficheroPedido, UserInfo origen, int puerto) {
 		m.requestRead();
-		System.out.println("Voy a pedirle " + ficheroPedido + " a " + prop.toString() + " de parte de " + origen.getId() + " " + origen.getIP());
+		System.out.println("Voy a pedirle " + ficheroPedido + " a " + prop + " de parte de " + origen.getId() + " " + origen.getIP() + " que esta en el puerto " + puerto);
 		ObjectOutputStream toCliente = canales.get(prop);
 		m.releaseRead();
 		
 		try {
-			toCliente.writeObject(new MensajeEmitirFichero("server", myIp, "cliente", prop, ficheroPedido, origen));
+			toCliente.writeObject(new MensajeEmitirFichero("server", myIp, "cliente", null, ficheroPedido, puerto));
 		} catch (IOException e) {
 
 			System.out.println("No se ha podido enviar la peticion de emision de " + ficheroPedido + " a " + prop);
@@ -73,16 +73,16 @@ public class Mensajero {
 		}
 	}
 
-	public void enviarPeerPreparado(InetAddress ipreceptor, InetAddress ip, int puerto, String filename) {
+	public void enviarPeerPreparado(int puertoreceptor, InetAddress ip, int puerto, String filename) {
 		m.requestRead();
-		System.out.println("Voy a decirle a "+ ipreceptor + " que " + ip + " le esta esperando en " + puerto);
-		ObjectOutputStream toCliente = canales.get(ipreceptor);
+		System.out.println("Voy a decirle a "+ puertoreceptor + " que " + ip + " le esta esperando en " + puerto);
+		ObjectOutputStream toCliente = canales.get(puertoreceptor);
 		m.releaseRead();
 		
 		try {
-			toCliente.writeObject(new MensajePreparadoServidorCliente("Server", myIp, "cliente", ipreceptor, ip, puerto, filename));
+			toCliente.writeObject(new MensajePreparadoServidorCliente("Server", myIp, "cliente", null, ip, puerto, filename));
 		} catch (IOException e) {
-			System.out.println("No se ha podido enviar los datos a " + ipreceptor + " de que " + ip + " le espera en " + puerto);
+			System.out.println("No se ha podido enviar los datos a " + puertoreceptor + " de que " + ip + " le espera en " + puerto);
 			e.printStackTrace();
 		}
 	}

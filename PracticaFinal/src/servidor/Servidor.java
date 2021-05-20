@@ -86,9 +86,9 @@ public class Servidor {
 	}
 	
 	// Enviar un mensaje a idreceptor de que la ip le esta esperando en el puerto
-	public void enviarPeerPreparado(InetAddress ipreceptor, InetAddress ip, int puerto, String filename) {
+	public void enviarPeerPreparado(int puertoreceptor, InetAddress ip, int puerto, String filename) {
 		// TODO Auto-generated method stub
-		mensajero.enviarPeerPreparado(ipreceptor, ip, puerto, filename);
+		mensajero.enviarPeerPreparado(puertoreceptor, ip, puerto, filename);
 	}
 	
 	// Registrar al usuario en las tablas y enviarle confirmacion
@@ -114,17 +114,17 @@ public class Servidor {
 	// Desregistrar al usuario que envia el mensaje
 	public void cerrarConexión(UserInfo origen, int puerto2) {
 		// TODO Auto-generated method stub
-		oyentes.get(origen.getIP()).acabar();
-		oyentes.remove(origen.getIP());
-		archivador.elimina(origen.getIP());
+		oyentes.get(puerto2).acabar();
+		oyentes.remove(puerto2);
+		archivador.elimina(puerto2);
 		mensajero.elimina(origen.getIP());
 	}
 	
 	// Buscar quien tiene ficheroPedido y decirle que origen se lo esta pidiendo
-	public void pedirFichero(String ficheroPedido, UserInfo origen) {
+	public void pedirFichero(String ficheroPedido, UserInfo origen, int puerto) {
 		// TODO Auto-generated method stub
-		InetAddress prop = archivador.buscaPropietario(ficheroPedido);
-		mensajero.pideFichero(prop, ficheroPedido, origen);
+		int prop = archivador.buscaPropietario(ficheroPedido);
+		mensajero.pideFichero(prop, ficheroPedido, origen, puerto);
 	}
 	
 	

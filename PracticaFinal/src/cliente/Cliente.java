@@ -147,10 +147,10 @@ public class Cliente implements Observable<ObserverCliente>{
 	}
 	
 	// Crear un proceso para empezar a emitir el fichero de nombrefichero 
-	public void emitirFichero(String nombreFichero, UserInfo solicitante) {
+	public void emitirFichero(String nombreFichero, int ps) {
 		// TODO Auto-generated method stub
 		for(ObserverCliente ob : observers) {
-			ob.alRecibirPeticionDeEmision(solicitante, nombreFichero);
+			ob.alRecibirPeticionDeEmision(nombreFichero);
 		}
 		
 		int puertoEmision = ultimoPuerto + 20;
@@ -160,10 +160,10 @@ public class Cliente implements Observable<ObserverCliente>{
 		ef.start();
 		
 		try {
-			toServer.writeObject(new MensajePreparadoClienteServidor(id, myIP, "Server" , serverip, puertoEmision, solicitante.getIP(), nombreFichero));
+			toServer.writeObject(new MensajePreparadoClienteServidor(id, myIP, "Server" , serverip, puertoEmision, ps, nombreFichero));
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			System.out.println("No se ha podido enviar el peerPreparado al servidor con destino " + solicitante.getIP());
+			System.out.println("No se ha podido enviar el peerPreparado al servidor con destino servidor");
 			e.printStackTrace();
 		}
 	}

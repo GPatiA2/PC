@@ -10,7 +10,7 @@ import coms.UserInfo;
 public interface ObserverCliente {
 	public void alRecibirConfirmacionConectar();
 	public void alRecibirTabla(List<FileInfo> m);
-	public void alRecibirPeticionDeEmision(UserInfo inf, String fichero);
+	public void alRecibirPeticionDeEmision( String fichero);
 	public void alRecibirDatosServidorCliente(UserInfo inf, InetAddress ip);
 	public void alRecibirConfirmacionCerrar(/*args*/);
 	public void alRegistrarse(boolean conectado, List<FileInfo> m, UserInfo inf);

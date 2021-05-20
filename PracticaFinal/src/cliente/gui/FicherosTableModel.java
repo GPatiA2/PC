@@ -59,7 +59,7 @@ public class FicherosTableModel extends AbstractTableModel implements ObserverCl
 	}
 
 	@Override
-	public void alRecibirPeticionDeEmision(UserInfo inf, String fichero) {
+	public void alRecibirPeticionDeEmision(String fichero) {
 		// TODO Auto-generated method stub
 	}
 
