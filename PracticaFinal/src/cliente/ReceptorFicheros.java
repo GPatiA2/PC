@@ -26,14 +26,24 @@ public class ReceptorFicheros extends Thread {
 	public void run() {
 		File f = new File(miId + File.separator + ficheroRecibido);
 		
+		// Aqui casca
 		try(Socket s = new Socket(ipemisor,portEmisor);
 				FileOutputStream fout = new FileOutputStream(f, false)) {
-
+			
+			System.out.println("Socket de receptor creado");
+			
 			ObjectOutputStream toPeer = new ObjectOutputStream(s.getOutputStream());
 			ObjectInputStream fromPeer = new ObjectInputStream(s.getInputStream());
 			
+			System.out.println("Canales extraidos");
+			
 			byte[] cont = (byte[]) fromPeer.readObject();
+			
+			System.out.println("Bytes leidos");
+			
 			fout.write(cont);
+			
+			System.out.println("Fichero escrito");
 			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block

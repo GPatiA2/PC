@@ -27,6 +27,7 @@ public class EmisorFicheros extends Thread {
 		byte[] contenido = null;
 		try {
 			contenido = Files.readAllBytes(f.toPath());
+			System.out.println("Fichero pedido cargado en memoria");
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			System.out.println("No se ha podido leer el fichero de " + id + File.separator + nombref);
@@ -34,9 +35,13 @@ public class EmisorFicheros extends Thread {
 		}
 		
 		try (ServerSocket ss = new ServerSocket(puerto); Socket s =  ss.accept();) {
+			System.out.println("ServerSocket creado y conexion aceptada");
 			ObjectOutputStream toPeer = new ObjectOutputStream(s.getOutputStream());
 			ObjectInputStream fromPeer = new ObjectInputStream(s.getInputStream());
+			System.out.println("Canales obtenidos");
+			
 			toPeer.writeObject(contenido);
+			System.out.println("Fichero enviado");
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			System.out.println("Error al crear el server-socket en el puerto " + puerto);

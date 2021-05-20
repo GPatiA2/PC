@@ -172,6 +172,7 @@ public class Cliente implements Observable<ObserverCliente>{
 	public void conectarConClienteEmisor(InetAddress ip, int puerto, String filename) {
 		// TODO Auto-generated method stub
 		ReceptorFicheros rf = new ReceptorFicheros(ip, puerto, filename, id);
+		rf.start();
 	}
 	
 	// Imprimir adios y salir

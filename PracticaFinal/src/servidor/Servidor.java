@@ -68,7 +68,7 @@ public class Servidor {
 				ObjectOutputStream serverOutput = new ObjectOutputStream(s.getOutputStream());
 				
 				InetAddress ipconectada = s.getInetAddress();
-				int puerto = s.getLocalPort();
+				int puerto = s.getPort();
 
 				OyenteCliente oc = new OyenteCliente(this, serverInput, serverOutput, puerto);
 				
