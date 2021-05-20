@@ -4,15 +4,15 @@ import java.io.Serializable;
 
 public class FileInfo implements Serializable{
 	
-	String user;
+	UserInfo ui;
 	String filename;
 	
-	public FileInfo(String u, String f) {
-		user = u;
+	public FileInfo(UserInfo u, String f) {
+		ui = u;
 		filename = f;
 	}
 	
 	public String getFileName() { return filename; }
-	public String getUser() { return user; }
+	public UserInfo getUser() { return ui; }
 	
 }

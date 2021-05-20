@@ -22,8 +22,8 @@ public class StatusBar extends JPanel implements ObserverCliente {
 	
 	public StatusBar(Controller c) {
 		ctrl = c;
-		ctrl.addObserver(this);
 		initGUI();
+		ctrl.addObserver(this);
 		setVisible(true);
 	}
 	
@@ -63,7 +63,8 @@ public class StatusBar extends JPanel implements ObserverCliente {
 	public void alRegistrarse(boolean conectado, List<FileInfo> m, UserInfo inf) {
 		// TODO Auto-generated method stub
 		String ip = inf.getIP().toString();
-		ipLabel.setText("ID = " + inf.getId() + " IP = " + ip);
+		String id = inf.getId();
+		ipLabel.setText("ID = " + id + " IP = " + ip);
 		if(conectado) {
 			ultimaAccion.setText("conectado");
 		}

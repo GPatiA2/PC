@@ -31,6 +31,8 @@ public class ControlPanel extends JPanel implements ObserverCliente {
 		this.mw = mw;
 		
 		initGUI();
+		ctrl.addObserver(this);
+		this.setVisible(true);
 	}
 	
 	private void initGUI() {
@@ -80,6 +82,8 @@ public class ControlPanel extends JPanel implements ObserverCliente {
 		tb.add(desconectarse);
 		tb.add(pedirTabla);
 		tb.add(pedirFichero);
+		
+		this.add(tb);
 	}
 
 	@Override
@@ -107,11 +111,13 @@ public class ControlPanel extends JPanel implements ObserverCliente {
 	@Override
 	public void alRecibirConfirmacionConectar() {
 		// TODO Auto-generated method stub
+		this.conectado.setBackground(Color.green); 
 	}
 
 	@Override
 	public void alRecibirConfirmacionCerrar() {
 		// TODO Auto-generated method stub
+		this.conectado.setBackground(Color.red); 
 	}
 
 }

@@ -7,6 +7,7 @@ import java.io.ObjectOutputStream;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -22,8 +23,10 @@ import coms.mensajes.MensajeCerrarConexion;
 import coms.mensajes.MensajeConexion;
 import coms.mensajes.MensajeListaUsuarios;
 import coms.mensajes.MensajePedirFichero;
+import coms.mensajes.MensajePreparadoClienteServidor;
 import coms.oyentes.OyenteServidor;
 
+// en bin -> java -cp . cliente.Cliente <id> <ipserver> <puertoserver>
 public class Cliente implements Observable<ObserverCliente>{
 	
 	InetAddress serverip;
@@ -44,6 +47,7 @@ public class Cliente implements Observable<ObserverCliente>{
 	List<FileInfo> usuarioFichero;
 	List<ObserverCliente> observers;
 	
+	int ultimoPuerto;
 	
 	public static void main(String args[]) {
 		
@@ -60,6 +64,8 @@ public class Cliente implements Observable<ObserverCliente>{
 		int ps = Integer.parseInt(args[2]);
 		String id = args[0];
 		
+		System.out.println("Argumentos parseados");
+		
 		Cliente c = new Cliente(ipserver, ps, id, ipthis);
 		
 		System.out.println("Cliente creado");
@@ -68,15 +74,15 @@ public class Cliente implements Observable<ObserverCliente>{
 		
 		Controller ctrl = new Controller(c);
 		
-		SwingUtilities.invokeLater(new Runnable() {
-			@Override
-			public void run() {
-				// TODO Auto-generated method stub
-				new MainWindow(ctrl);
-			}
-		});
+		new MainWindow(ctrl);
 		
-		c.init();
+		
+		try {
+			c.init();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		System.out.println("Oyente Creado");
 	}
 	
@@ -90,27 +96,31 @@ public class Cliente implements Observable<ObserverCliente>{
 		fileIds = cargarNombresFicheros();
 		conectado = false;
 		usuarioFichero = new ArrayList<FileInfo>();
+		ultimoPuerto = sport;
 		
-		try {
-			s = new Socket(sip, sport);
-			fromServer = new ObjectInputStream(s.getInputStream());
-			toServer = new ObjectOutputStream(s.getOutputStream());
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		this.enviarMensajeConexion(sip);
+		System.out.println("Creando Socket");
+		System.out.println("IP = " + serverip);
+		System.out.println("PUERTO = " + serverPort);
+	
 	}
 	
-	private void init() {
-		OyenteServidor os = new OyenteServidor(this, fromServer, toServer);
-		Thread t = new Thread() {
-			public void run() {
-				os.run();
-			}
-		};
-		t.start();
+	private void init() throws IOException {
+		s = new Socket(serverip, serverPort);
+		System.out.println("Socket creado");
+		toServer = new ObjectOutputStream(s.getOutputStream());
+		System.out.println("Canal de salida del cliente obtenido");
+		if(toServer != null) {
+			System.out.println("Salida no es null");
+		}
+		fromServer = new ObjectInputStream(s.getInputStream());
+		System.out.println("Canal de entrada al cliente obtenido");
+		if(fromServer != null) {
+			System.out.println("Entrada no es null");
+		}
+		Thread os = new OyenteServidor(this, fromServer, toServer);
+		os.start();
+		
+		enviarMensajeConexion(serverip);
 	}
 	
 	private ArrayList<String> cargarNombresFicheros(){
@@ -139,13 +149,29 @@ public class Cliente implements Observable<ObserverCliente>{
 	// Crear un proceso para empezar a emitir el fichero de nombrefichero 
 	public void emitirFichero(String nombreFichero, UserInfo solicitante) {
 		// TODO Auto-generated method stub
+		for(ObserverCliente ob : observers) {
+			ob.alRecibirPeticionDeEmision(solicitante, nombreFichero);
+		}
 		
+		int puertoEmision = ultimoPuerto + 20;
+		ultimoPuerto += 20;
+		
+		EmisorFicheros ef = new EmisorFicheros(nombreFichero,puertoEmision, id);
+		ef.start();
+		
+		try {
+			toServer.writeObject(new MensajePreparadoClienteServidor(id, myIP, "Server" , serverip, puertoEmision, solicitante.getIP(), nombreFichero));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			System.out.println("No se ha podido enviar el peerPreparado al servidor con destino " + solicitante.getIP());
+			e.printStackTrace();
+		}
 	}
 	
 	// Crear un proceso para recibir el archivo que está enviando el cliente con la ip y el puerto
-	public void conectarConClienteEmisor(InetAddress ip, int puerto) {
+	public void conectarConClienteEmisor(InetAddress ip, int puerto, String filename) {
 		// TODO Auto-generated method stub
-		
+		ReceptorFicheros rf = new ReceptorFicheros(ip, puerto, filename, id);
 	}
 	
 	// Imprimir adios y salir

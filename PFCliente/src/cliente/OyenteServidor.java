@@ -22,6 +22,7 @@ public class OyenteServidor extends Thread {
 		
 		while(s != "END") {
 			try {
+				System.out.println("Enviando " + s);
 				out.writeObject(s);
 			} catch (IOException e) {
 				// TODO Auto-generated catch block

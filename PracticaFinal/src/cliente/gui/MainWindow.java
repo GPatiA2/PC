@@ -32,10 +32,15 @@ public class MainWindow extends JFrame implements ObserverCliente {
 		ctrl = c;
 		
 		initGUI();
+		
+		this.setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+		this.pack();
+		this.setVisible(true);
 	}
 	
 	private void initGUI() {
 		JPanel mainPanel = new JPanel(new BorderLayout());
+		this.setContentPane(mainPanel);
 		mainPanel.add(new StatusBar(ctrl), BorderLayout.PAGE_END);
 		mainPanel.add(new ControlPanel(ctrl, this), BorderLayout.PAGE_START);
 		
@@ -78,9 +83,10 @@ public class MainWindow extends JFrame implements ObserverCliente {
 			
 		});
 		
-		this.setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
-		this.pack();
-		this.setVisible(true);
+		infoPanel.setVisible(true);
+		mainPanel.setVisible(true);
+		
+		
 	}
 	
 	

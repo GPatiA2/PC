@@ -17,6 +17,7 @@ import coms.FileInfo;
 import coms.UserInfo;
 import coms.oyentes.OyenteCliente;
 
+// en bin -> java -cp . servidor.Servidor <puerto>
 public class Servidor {
 	
 	int puerto;
@@ -24,8 +25,9 @@ public class Servidor {
 	ServerSocket ss;
 	
 	Archivador archivador;
-	
 	Mensajero mensajero;
+	
+	Map<InetAddress, OyenteCliente> oyentes;
 	
 	public static void main(String args[]) throws IOException {
 		int port = Integer.parseInt(args[0]);
@@ -50,7 +52,9 @@ public class Servidor {
 			System.out.println("Error al montar el serversocket");
 			e.printStackTrace();
 		}
-		mensajero = new Mensajero();
+		
+		oyentes = new HashMap<InetAddress,OyenteCliente>();
+		mensajero = new Mensajero(myIp);
 		archivador = new Archivador();
 		System.out.println("IP = " + myIp.toString() + " puerto = " + puerto);
 	}	
@@ -62,16 +66,15 @@ public class Servidor {
 				Socket s = ss.accept();
 				ObjectInputStream serverInput = new ObjectInputStream(s.getInputStream());
 				ObjectOutputStream serverOutput = new ObjectOutputStream(s.getOutputStream());
+				
 				OyenteCliente oc = new OyenteCliente(this, serverInput, serverOutput);
+				
+				InetAddress ipconectada = s.getInetAddress();
+				System.out.println("Se acaba de conectar " + s.getInetAddress());
+				oyentes.put(ipconectada, oc);
 				mensajero.registrar(s.getInetAddress(), serverOutput);
 				
-				Thread t = new Thread() {
-					public void run() {
-						oc.run();
-					}
-				};
-				
-				t.run();
+				oc.start();
 				
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
@@ -81,9 +84,9 @@ public class Servidor {
 	}
 	
 	// Enviar un mensaje a idreceptor de que la ip le esta esperando en el puerto
-	public void enviarPeerPreparado(String idreceptor, InetAddress ip, int puerto) {
+	public void enviarPeerPreparado(InetAddress ipreceptor, InetAddress ip, int puerto, String filename) {
 		// TODO Auto-generated method stub
-	
+		mensajero.enviarPeerPreparado(ipreceptor, ip, puerto, filename);
 	}
 	
 	// Registrar al usuario en las tablas y enviarle confirmacion
@@ -109,13 +112,17 @@ public class Servidor {
 	// Desregistrar al usuario que envia el mensaje
 	public void cerrarConexión(UserInfo origen) {
 		// TODO Auto-generated method stub
-		
+		oyentes.get(origen.getIP()).acabar();
+		oyentes.remove(origen.getIP());
+		archivador.elimina(origen.getIP());
+		mensajero.elimina(origen.getIP());
 	}
 	
 	// Buscar quien tiene ficheroPedido y decirle que origen se lo esta pidiendo
 	public void pedirFichero(String ficheroPedido, UserInfo origen) {
 		// TODO Auto-generated method stub
-		
+		InetAddress prop = archivador.buscaPropietario(ficheroPedido);
+		mensajero.pideFichero(prop, ficheroPedido, origen);
 	}
 	
 	

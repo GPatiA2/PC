@@ -24,11 +24,15 @@ public class Server {
 			S = new Server(puerto);
 			System.out.println(S.ip);
 			S.run();
+			
+			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			System.out.println("Error en el puerto");
 			e.printStackTrace();
 		}
+		
+		
 	}
 	
 	public Server(int port) throws IOException {

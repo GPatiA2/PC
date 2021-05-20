@@ -13,7 +13,7 @@ import coms.UserInfo;
 
 public class FicherosTableModel extends AbstractTableModel implements ObserverCliente {
 	
-	private static String[] headers = {"Propietario", "Fichero"};
+	private static String[] headers = {"Propietario", "IP" , "Fichero"};
 	
 	List<FileInfo> elementos;
 	
@@ -26,7 +26,7 @@ public class FicherosTableModel extends AbstractTableModel implements ObserverCl
 	@Override
 	public int getColumnCount() {
 		// TODO Auto-generated method stub
-		return 2;
+		return headers.length;
 	}
 
 	@Override
@@ -40,8 +40,9 @@ public class FicherosTableModel extends AbstractTableModel implements ObserverCl
 		// TODO Auto-generated method stub
 		FileInfo fi = elementos.get(arg0);
 		switch (arg1) {
-			case 0: return fi.getUser();
-			case 1: return fi.getFileName();
+			case 0: return fi.getUser().getId();
+			case 1: return fi.getUser().getIP().toString();
+			case 2: return fi.getFileName();
 			default: return "";
 		}
 	}
@@ -79,5 +80,9 @@ public class FicherosTableModel extends AbstractTableModel implements ObserverCl
 		elementos = m;
 		fireTableDataChanged();
 	}
-
+	
+	public String getColumnName(int arg) {
+		return headers[arg];
+	}
+	
 }

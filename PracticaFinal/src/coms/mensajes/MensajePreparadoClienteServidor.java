@@ -7,23 +7,22 @@ import servidor.Servidor;
 public class MensajePreparadoClienteServidor extends MensajeServer {
 	// Puerto en el que se ha preparado el cliente para hacer de servidor
 	int puerto;
-	// IP del cliente que esta preparado para hacer de servidor
-	InetAddress ip;
-	// Id del usuario al que hay que comunicar que este cliente ya esta preparado
-	String idreceptor;
+	// Ip del usuario al que hay que comunicar que este cliente ya esta preparado
+	InetAddress ipreceptor;
+	// Nombre del fichero que va a emitir el cliente
 	
-	public MensajePreparadoClienteServidor(String idfrom, InetAddress ipfrom, String idto, InetAddress ipto, int puerto, InetAddress ip, String idreceptor) {
+	String filename;
+	public MensajePreparadoClienteServidor(String idfrom, InetAddress ipfrom, String idto, InetAddress ipto, int puerto, InetAddress ipreceptor, String filename) {
 		super(idfrom, ipfrom, idto, ipto);
 		// TODO Auto-generated constructor stub
 		this.puerto = puerto;
-		this.ip = ip;
-		this.idreceptor = idreceptor;
+		this.ipreceptor = ipreceptor;
 	}
 
 	@Override
 	public void accion(Servidor s) {
 		// TODO Auto-generated method stub
-		s.enviarPeerPreparado(idreceptor, ip, puerto);
+		s.enviarPeerPreparado(ipreceptor, super.origen.getIP(), puerto, filename);
 	}
 
 }

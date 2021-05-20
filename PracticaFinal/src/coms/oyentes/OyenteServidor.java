@@ -21,7 +21,8 @@ public class OyenteServidor extends Oyente {
 		// TODO Auto-generated method stub
 		while(true) {
 			try {
-				System.out.println("Recibiendo");
+				System.out.println("Recibiendo en cliente"
+						+ "");
 				MensajeCliente m = (MensajeCliente) in.readObject();
 				m.accion(c);
 			} catch (ClassNotFoundException | IOException e) {
