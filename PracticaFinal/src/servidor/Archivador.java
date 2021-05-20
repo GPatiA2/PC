@@ -13,6 +13,13 @@ import java.util.concurrent.Semaphore;
 import coms.FileInfo;
 import coms.UserInfo;
 
+/**
+ * Esta clase se encarga de almacenar la informacion sobre los ficheros que tiene cada cliente conectado
+ * Para manejar los problemas de concurrencia, se ha implementado el monitor visto en clase para lectores escritores.
+ * 
+ * @author Guille
+ *
+ */
 public class Archivador {
 	
 	Map<String, Set<Integer>> ficheroAPropietario;

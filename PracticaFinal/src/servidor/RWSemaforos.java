@@ -2,6 +2,11 @@ package servidor;
 
 import java.util.concurrent.Semaphore;
 
+/**
+ * Solucion a los lectores escritores mediante semaforos vista en clase
+ * @author Guille
+ *
+ */
 public class RWSemaforos {
 	
 	// Semaforo para que esperen los lectores

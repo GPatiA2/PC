@@ -14,17 +14,25 @@ import coms.mensajes.MensajeEmitirFichero;
 import coms.mensajes.MensajePreparadoServidorCliente;
 import coms.oyentes.OyenteCliente;
 
+/**
+ * Este objeto almacena los canales de salida para cada cliente.
+ * Guarda una asociacion puerto-canal de salida para cada cliente
+ * 
+ * Ademas, como se realizan operaciones de escritura y lectura se implementa
+ * una solucion para el problema de lectores y escritores usando semaforos.
+ *  
+ * @author Guille
+ *
+ */
 public class Mensajero {
 	
 	Map<Integer, ObjectOutputStream> canales;
-	Map<String, Integer> usuarios;
 	InetAddress myIp;
 	
 	RWSemaforos m;
 	
 	public Mensajero(InetAddress myIp) {
 		canales = new HashMap<Integer, ObjectOutputStream>();
-		usuarios = new HashMap<String, Integer>();
 		this.myIp = myIp;
 		m = new RWSemaforos();
 	}
@@ -38,8 +46,7 @@ public class Mensajero {
 
 	public void guardaUsername(String id, int puerto) {
 		m.requestWrite();
-		usuarios.put(id, puerto);
-		System.out.println(usuarios.size());
+		System.out.println(canales.size());
 		m.releaseWrite();
 	}
 
@@ -89,11 +96,11 @@ public class Mensajero {
 		}
 	}
 
-	public void elimina(InetAddress ip) {
+	public void elimina(int puerto) {
 		// TODO Auto-generated method stub
 		m.requestWrite();
-		System.out.println("Voy a sacar a " + ip + " del registro");
-		canales.remove(ip);
+		System.out.println("Voy a sacar a " + puerto + " del registro");
+		canales.remove(puerto);
 		m.releaseWrite();
 	}
 	

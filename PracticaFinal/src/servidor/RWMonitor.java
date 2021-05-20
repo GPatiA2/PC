@@ -3,6 +3,11 @@ package servidor;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
+/**
+ * Monitor de lectores escritores visto en clase
+ * @author Guille
+ *
+ */
 public class RWMonitor {
 	
 	private ReentrantLock cerrojo;
