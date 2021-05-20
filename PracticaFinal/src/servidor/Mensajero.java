@@ -16,37 +16,37 @@ import coms.oyentes.OyenteCliente;
 
 public class Mensajero {
 	
-	Map<InetAddress, ObjectOutputStream> canales;
-	Map<String, InetAddress> usuarios;
+	Map<Integer, ObjectOutputStream> canales;
+	Map<String, Integer> usuarios;
 	InetAddress myIp;
 	
 	RWSemaforos m;
 	
 	public Mensajero(InetAddress myIp) {
-		canales = new HashMap<InetAddress, ObjectOutputStream>();
-		usuarios = new HashMap<String, InetAddress>();
+		canales = new HashMap<Integer, ObjectOutputStream>();
+		usuarios = new HashMap<String, Integer>();
 		this.myIp = myIp;
 		m = new RWSemaforos();
 	}
 
-	public void registrar(InetAddress inetAddress, ObjectOutputStream oc) {
+	public void registrar(int puerto, ObjectOutputStream oc) {
 		m.requestRead();
-		canales.put(inetAddress, oc);
-		System.out.println("Acabo de registrar a " + inetAddress.toString());
+		canales.put(puerto, oc);
+		System.out.println("Acabo de registrar a " + puerto);
 		m.releaseRead();
 	}
 
-	public void guardaUsername(String id, InetAddress ip) {
+	public void guardaUsername(String id, int puerto) {
 		m.requestWrite();
-		usuarios.put(id, ip);
+		usuarios.put(id, puerto);
 		System.out.println(usuarios.size());
 		m.releaseWrite();
 	}
 
-	public void enviaListaFicheros(List<FileInfo> l, UserInfo origen)  {
+	public void enviaListaFicheros(List<FileInfo> l, UserInfo origen, int puerto)  {
 		m.requestRead();
-		System.out.println("Vengo buscando a " + origen.getIP().toString());
-		ObjectOutputStream toCliente = canales.get(origen.getIP());
+		System.out.println("Vengo buscando a " + origen.getIP().toString() + " por el puerto " + puerto);
+		ObjectOutputStream toCliente = canales.get(puerto);
 		m.releaseRead();
 		
 		try {

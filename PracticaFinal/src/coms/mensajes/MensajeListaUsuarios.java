@@ -13,9 +13,9 @@ public class MensajeListaUsuarios extends MensajeServer {
 	}
 
 	@Override
-	public void accion(Servidor s) {
+	public void accion(Servidor s, int puerto) {
 		// TODO Auto-generated method stub
-		s.enviarListaUsuarios(this.origen);
+		s.enviarListaUsuarios(this.origen, puerto);
 	}
 
 }

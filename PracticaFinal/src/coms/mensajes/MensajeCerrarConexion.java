@@ -12,9 +12,9 @@ public class MensajeCerrarConexion extends MensajeServer {
 	}
 
 	@Override
-	public void accion(Servidor s) {
+	public void accion(Servidor s, int puerto) {
 		// TODO Auto-generated method stub
-		s.cerrarConexión(this.origen);
+		s.cerrarConexión(this.origen, puerto);
 	}
 
 }

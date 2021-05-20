@@ -18,9 +18,9 @@ public class MensajeConexion extends MensajeServer {
 
 
 	@Override
-	public void accion(Servidor s) {
+	public void accion(Servidor s, int puerto) {
 		// TODO Auto-generated method stub
-		s.aceptarConexion(this.origen, nombresficheros);
+		s.aceptarConexion(this.origen, nombresficheros, puerto);
 	}
 
 }

@@ -15,16 +15,16 @@ import coms.UserInfo;
 
 public class Archivador {
 	
-	Map<String, Set<String>> ficheroAPropietario;
-	Map<String, Set<String>> propietarioAFichero;
+	Map<String, Set<Integer>> ficheroAPropietario;
+	Map<Integer, Set<String>> propietarioAFichero;
 	List<FileInfo> listado;
 	
 	RWMonitor m;
 	
 	
 	public Archivador() {
-		ficheroAPropietario =  new HashMap<String, Set<String>>();
-		propietarioAFichero = new HashMap<String, Set<String>>();
+		ficheroAPropietario =  new HashMap<String, Set<Integer>>();
+		propietarioAFichero = new HashMap<Integer, Set<String>>();
 		
 		m = new RWMonitor();
 		listado = new ArrayList<FileInfo>();
@@ -37,66 +37,66 @@ public class Archivador {
 		return l;
 	}
 
-	public void almacena(List<String> nombresficheros, UserInfo ui) {
+	public void almacena(List<String> nombresficheros, UserInfo ui, int puerto) {
 		// TODO Auto-generated method stub
 		m.requestWrite();
 		for(String s : nombresficheros) {
 			
 			if(ficheroAPropietario.containsKey(s)) {
-				ficheroAPropietario.get(s).add(ui.getId());
+				ficheroAPropietario.get(s).add(puerto);
 			}
 			else {
-				Set<String> c = new HashSet<String>();
-				c.add(ui.getId());
+				Set<Integer> c = new HashSet<Integer>();
+				c.add(puerto);
 				ficheroAPropietario.put(s,c);
 			}
-			if(propietarioAFichero.containsKey(ui.getId())) {
-				propietarioAFichero.get(ui.getId()).add(s);
+			if(propietarioAFichero.containsKey(puerto)) {
+				propietarioAFichero.get(puerto).add(s);
 			}
 			else {
 				Set<String> fich = new HashSet<String>();
 				fich.add(s);
-				propietarioAFichero.put(ui.getId(), fich);
+				propietarioAFichero.put(puerto, fich);
 			}
 			
-			FileInfo fi = new FileInfo(ui, s);
+			FileInfo fi = new FileInfo(ui, s, puerto);
 			listado.add(fi);
 		}
 		m.releaseWrite();
 	}
 
-	public void elimina(String id) {
+	public void elimina(int puerto) {
 		// TODO Auto-generated method stub
 		m.requestWrite();
 		List<FileInfo> quitarDeListado = new ArrayList<FileInfo>();
 		List<String> quitarDeFicheroAPropietario = new ArrayList<String>();
 		
 		for(FileInfo fi : listado) {
-			if(fi.getUser().getIP() == ip) {
+			if(fi.getPuertoUser() == puerto) {
 				quitarDeListado.add(fi);
 				quitarDeFicheroAPropietario.add(fi.getFileName());
 			}
 		}
 		
 		for(FileInfo fi : quitarDeListado) { listado.remove(fi); }
-		for(String s: quitarDeFicheroAPropietario) { ficheroAPropietario.get(s).remove(ip); }
-		propietarioAFichero.remove(ip);
+		for(String s : quitarDeFicheroAPropietario) { ficheroAPropietario.get(s).remove(puerto); }
+		propietarioAFichero.remove(puerto);
 		
 		m.releaseWrite();
 		
 	}
 
-	public InetAddress buscaPropietario(String ficheroPedido) {
+	public int buscaPropietario(String ficheroPedido) {
 		// TODO Auto-generated method stub
 		m.requestRead();
 		
-		Set<InetAddress> s = ficheroAPropietario.get(ficheroPedido);
-		Iterator<InetAddress> it = s.iterator();
-		InetAddress ip = it.next();
+		Set<Integer> s = ficheroAPropietario.get(ficheroPedido);
+		Iterator<Integer> it = s.iterator();
+		Integer p = it.next();
 		
 		m.releaseRead();
 		
-		return ip;
+		return p;
 	}
 	
 	

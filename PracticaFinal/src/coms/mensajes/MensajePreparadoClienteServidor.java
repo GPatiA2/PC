@@ -20,7 +20,7 @@ public class MensajePreparadoClienteServidor extends MensajeServer {
 	}
 
 	@Override
-	public void accion(Servidor s) {
+	public void accion(Servidor s, int puerto) {
 		// TODO Auto-generated method stub
 		s.enviarPeerPreparado(ipreceptor, super.origen.getIP(), puerto, filename);
 	}

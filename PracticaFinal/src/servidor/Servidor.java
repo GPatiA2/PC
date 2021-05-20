@@ -27,7 +27,7 @@ public class Servidor {
 	Archivador archivador;
 	Mensajero mensajero;
 	
-	Map<InetAddress, OyenteCliente> oyentes;
+	Map<Integer, OyenteCliente> oyentes;
 	
 	public static void main(String args[]) throws IOException {
 		int port = Integer.parseInt(args[0]);
@@ -53,7 +53,7 @@ public class Servidor {
 			e.printStackTrace();
 		}
 		
-		oyentes = new HashMap<InetAddress,OyenteCliente>();
+		oyentes = new HashMap<Integer,OyenteCliente>();
 		mensajero = new Mensajero(myIp);
 		archivador = new Archivador();
 		System.out.println("IP = " + myIp.toString() + " puerto = " + puerto);
@@ -67,12 +67,14 @@ public class Servidor {
 				ObjectInputStream serverInput = new ObjectInputStream(s.getInputStream());
 				ObjectOutputStream serverOutput = new ObjectOutputStream(s.getOutputStream());
 				
-				OyenteCliente oc = new OyenteCliente(this, serverInput, serverOutput);
-				
 				InetAddress ipconectada = s.getInetAddress();
+				int puerto = s.getLocalPort();
+
+				OyenteCliente oc = new OyenteCliente(this, serverInput, serverOutput, puerto);
+				
 				System.out.println("Se acaba de conectar " + s.getInetAddress());
-				oyentes.put(ipconectada, oc);
-				mensajero.registrar(s.getInetAddress(), serverOutput);
+				oyentes.put(puerto, oc);
+				mensajero.registrar(puerto, serverOutput);
 				
 				oc.start();
 				
@@ -90,18 +92,18 @@ public class Servidor {
 	}
 	
 	// Registrar al usuario en las tablas y enviarle confirmacion
-	public void aceptarConexion(UserInfo origen, List<String> nombresficheros) {
+	public void aceptarConexion(UserInfo origen, List<String> nombresficheros, int puerto) {
 		// TODO Auto-generated method stub
-		mensajero.guardaUsername(origen.getId(), origen.getIP());
-		archivador.almacena(nombresficheros, origen);
+		mensajero.guardaUsername(origen.getId(), puerto);
+		archivador.almacena(nombresficheros, origen, puerto);
 	}
 
 	// Enviarle la lista de usuarios al solicitante
-	public void enviarListaUsuarios(UserInfo origen) {
+	public void enviarListaUsuarios(UserInfo origen, int puerto) {
 		// TODO Auto-generated method stub
 		List<FileInfo> l = archivador.recuperaLista();
 		try {
-			mensajero.enviaListaFicheros(l, origen);			
+			mensajero.enviaListaFicheros(l, origen, puerto);			
 		}
 		catch (Exception e){
 			System.out.println("Error al enviar la lista de ficheros");
@@ -110,7 +112,7 @@ public class Servidor {
 	}
 	
 	// Desregistrar al usuario que envia el mensaje
-	public void cerrarConexión(UserInfo origen) {
+	public void cerrarConexión(UserInfo origen, int puerto2) {
 		// TODO Auto-generated method stub
 		oyentes.get(origen.getIP()).acabar();
 		oyentes.remove(origen.getIP());

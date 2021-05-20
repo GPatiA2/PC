@@ -13,6 +13,6 @@ public abstract class MensajeServer extends Mensaje {
 		// TODO Auto-generated constructor stub
 	}
 	
-	public abstract void accion(Servidor s);
+	public abstract void accion(Servidor s, int puerto);
 
 }
