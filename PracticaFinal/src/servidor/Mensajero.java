@@ -58,6 +58,7 @@ public class Mensajero {
 		}
 	}
 
+	// Enviar mensaje a prop de que el puerto puerto le esta pidiendo ficheropedido
 	public void pideFichero(int prop, String ficheroPedido, UserInfo origen, int puerto) {
 		m.requestRead();
 		System.out.println("Voy a pedirle " + ficheroPedido + " a " + prop + " de parte de " + origen.getId() + " " + origen.getIP() + " que esta en el puerto " + puerto);
@@ -73,14 +74,15 @@ public class Mensajero {
 		}
 	}
 
+	// Enviar mensaje a puerto de que se conecte a puertoreceptor
 	public void enviarPeerPreparado(int puertoreceptor, InetAddress ip, int puerto, String filename) {
 		m.requestRead();
-		System.out.println("Voy a decirle a "+ puertoreceptor + " que " + ip + " le esta esperando en " + puerto);
-		ObjectOutputStream toCliente = canales.get(puertoreceptor);
+		System.out.println("Voy a decirle a "+ puerto + " que " + ip + " le esta esperando en " + puertoreceptor + " para enviarle " + filename);
+		ObjectOutputStream toCliente = canales.get(puerto);
 		m.releaseRead();
 		
 		try {
-			toCliente.writeObject(new MensajePreparadoServidorCliente("Server", myIp, "cliente", null, ip, puerto, filename));
+			toCliente.writeObject(new MensajePreparadoServidorCliente("Server", myIp, "cliente", null, ip, puertoreceptor, filename));
 		} catch (IOException e) {
 			System.out.println("No se ha podido enviar los datos a " + puertoreceptor + " de que " + ip + " le espera en " + puerto);
 			e.printStackTrace();

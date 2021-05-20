@@ -11,6 +11,7 @@ public class MensajeEmitirFichero extends MensajeCliente {
 	// El solicitante de la emision del fichero
 	int ps;
 	
+	// el usuario en puerto esta pidiendo a (ipto,idto) el fichero con nombre  
 	public MensajeEmitirFichero(String idfrom, InetAddress ipfrom, String idto, InetAddress ipto, String nombre, int puerto) {
 		super(idfrom, ipfrom, idto, ipto);
 		// TODO Auto-generated constructor stub

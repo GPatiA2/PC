@@ -85,7 +85,7 @@ public class Servidor {
 		}
 	}
 	
-	// Enviar un mensaje a idreceptor de que la ip le esta esperando en el puerto
+	// Enviar un mensaje a puerto de que se conecte a puertoreceptor
 	public void enviarPeerPreparado(int puertoreceptor, InetAddress ip, int puerto, String filename) {
 		// TODO Auto-generated method stub
 		mensajero.enviarPeerPreparado(puertoreceptor, ip, puerto, filename);
@@ -120,7 +120,7 @@ public class Servidor {
 		mensajero.elimina(origen.getIP());
 	}
 	
-	// Buscar quien tiene ficheroPedido y decirle que origen se lo esta pidiendo
+	// Buscar quien tiene ficheroPedido y decirle que origen (en el puerto) se lo esta pidiendo
 	public void pedirFichero(String ficheroPedido, UserInfo origen, int puerto) {
 		// TODO Auto-generated method stub
 		int prop = archivador.buscaPropietario(ficheroPedido);

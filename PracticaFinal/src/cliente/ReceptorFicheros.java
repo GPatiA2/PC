@@ -25,7 +25,12 @@ public class ReceptorFicheros extends Thread {
 	
 	public void run() {
 		File f = new File(miId + File.separator + ficheroRecibido);
-		
+		try {
+			f.createNewFile();
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 		// Aqui casca
 		try(Socket s = new Socket(ipemisor,portEmisor);
 				FileOutputStream fout = new FileOutputStream(f, false)) {

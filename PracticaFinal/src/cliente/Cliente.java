@@ -146,7 +146,7 @@ public class Cliente implements Observable<ObserverCliente>{
 		}
 	}
 	
-	// Crear un proceso para empezar a emitir el fichero de nombrefichero 
+	// Crear un proceso para empezar a emitir el fichero de nombrefichero al usuario en ps
 	public void emitirFichero(String nombreFichero, int ps) {
 		// TODO Auto-generated method stub
 		for(ObserverCliente ob : observers) {
@@ -156,11 +156,13 @@ public class Cliente implements Observable<ObserverCliente>{
 		int puertoEmision = ultimoPuerto + 20;
 		ultimoPuerto += 20;
 		
+		System.out.println("Voy a emitir el " + nombreFichero + " por el puerto " + puertoEmision );
+
 		EmisorFicheros ef = new EmisorFicheros(nombreFichero,puertoEmision, id);
 		ef.start();
 		
 		try {
-			toServer.writeObject(new MensajePreparadoClienteServidor(id, myIP, "Server" , serverip, puertoEmision, ps, nombreFichero));
+			toServer.writeObject(new MensajePreparadoClienteServidor(id, myIP, "Server" , serverip, ps, puertoEmision, nombreFichero));
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			System.out.println("No se ha podido enviar el peerPreparado al servidor con destino servidor");
@@ -171,6 +173,7 @@ public class Cliente implements Observable<ObserverCliente>{
 	// Crear un proceso para recibir el archivo que está enviando el cliente con la ip y el puerto
 	public void conectarConClienteEmisor(InetAddress ip, int puerto, String filename) {
 		// TODO Auto-generated method stub
+		System.out.println("Voy a recibir " + filename + " de " + ip + " en el puerto " + puerto);
 		ReceptorFicheros rf = new ReceptorFicheros(ip, puerto, filename, id);
 		rf.start();
 	}
